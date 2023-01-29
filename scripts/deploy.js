@@ -6,26 +6,38 @@ const axios =  require("axios");
 async function main() { 
   const accounts = await hre.ethers.getSigners();
 
-  const hashData = await createAndPublishDIDJson("did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
-  const hash = hashData["IpfsHash"]
+  
  
   const DApp = await hre.ethers.getContractFactory("DApp");
   const dapp = DApp.connect(accounts[0]).deploy();
 
-  console.log(hash)
 
-  const Controller = await hre.ethers.getContractFactory("Controller");
-  const controller = Controller.connect(accounts[1]).deploy(
+  const hashData1 = await createAndPublishDIDJson("did:hide:patient1", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
+  const hash1 = hashData1["IpfsHash"]
+  console.log('Hash 1: ', hash1)
+  const Controller1 = await hre.ethers.getContractFactory("Controller");
+  const controller1 = Controller1.connect(accounts[1]).deploy(
     (await dapp).address,
     "abc123", //temporary DID
-    (await hash)
+    (await hash1)
+  );
+
+  const hashData2 = await createAndPublishDIDJson("did:hide:patient2", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
+  const hash2 = hashData2["IpfsHash"]
+  console.log('Hash 2: ', hash2)
+  const Controller2 = await hre.ethers.getContractFactory("Controller");
+  const controller2 = Controller2.connect(accounts[2]).deploy(
+    (await dapp).address,
+    "def456", //temporary DID
+    (await hash2)
   );
  
   console.log(
     "DApp Contract deployed to: ",
     (await dapp).address
   );
-  console.log("Controller Contract deployed to: ", (await controller).address);
+  console.log("Controller1 Contract deployed to: ", (await controller1).address);
+  console.log("Controller2 Contract deployed to: ", (await controller2).address);
   
 }
 

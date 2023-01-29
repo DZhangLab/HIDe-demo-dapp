@@ -62,6 +62,12 @@ contract DApp{
         userRegistry.insertUser(_did, msg.sender);
     }
 
+    // Given the patientDID returns the contract key
+    function getPatientProxy(string memory _patientDid) public view returns(address){
+        (, address contractKey) = userRegistry.getUser(_patientDid);
+        return contractKey;
+    }
+
     // Consumer (or owner for now) can add something to the patient data
     function addDataToPatient(string memory _patientDid, string memory data) public{
         require(_consumer.has(msg.sender) || msg.sender == owner, "DOES_NOT_HAVE_CONSUMER_ROLE"); //remove owner condition

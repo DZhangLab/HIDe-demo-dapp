@@ -6,7 +6,7 @@ import DApp from "../src/artifacts/contracts/DApp.sol/DApp.json"
 import axios from 'axios';
 
 // Update with the contract address logged out to the CLI when it was deployed 
-const proxyAddress = process.env.REACT_APP_CONTROLLER_ADDRESS;
+const firstProxyAddress = process.env.REACT_APP_CONTROLLER_ADDRESS;
 const dappAddress = process.env.REACT_APP_DAPP_ADDRESS;
 
 
@@ -15,10 +15,26 @@ function App() {
   const [url, setUrl] = useState("");
   const [did, setDid] = useState("");
   const [attestation, setAttestation] = useState("");
+  const [proxyAddress, setProxyAddress] = useState(firstProxyAddress);
 
   // request access to the user's MetaMask account
   async function requestAccount() {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
+  }
+
+  async function getProxy() {
+    if (typeof window.ethereum !== 'undefined') {
+      await requestAccount();
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const contract = new ethers.Contract(dappAddress, DApp.abi, provider)
+      try {
+        const data = await contract.getPatientProxy(did);
+        setProxyAddress(data);
+        console.log('data: ', data)
+      } catch (err) {
+        console.log("Error: ", err)
+      }
+    }    
   }
 
   // call the smart contract, read the current greeting value
@@ -36,6 +52,8 @@ function App() {
       }
     }    
   }
+
+  
 
   function retreiveJson() {
     console.log(url)
@@ -65,10 +83,6 @@ function App() {
     data : newJson
   };
 
-  
-
-  
-
   if (typeof window.ethereum !== "undefined") {
     await requestAccount();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -95,6 +109,14 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <button onClick={getProxy}>Get Proxy</button>
+        <input
+          type="text"
+          required
+          placeholder="DID"
+          onChange={(e) => setDid(e.target.value)}
+        />
+
         <button onClick={fetchHash}>Fetch Hash</button>
         <button onClick={retreiveJson}>View DID Document</button>
         <p style={{flex: 1, flexWrap: 'wrap'}}> {JSON.stringify(json)}</p>
