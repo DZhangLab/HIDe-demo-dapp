@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Base64} from "./libraries/Base64.sol";
 import {Registry} from "./Registry.sol";
-
+import "hardhat/console.sol";
 /**
  * @dev Contract for managing Consumer Registries
  *
@@ -58,8 +58,8 @@ contract ConsumerRegistry is Registry {
     public
     returns (uint256)
   {
-    return
-      Registry.insertEntry( _did, _contractKey);
+    console.log("here");
+    return Registry.insertEntry( _did, _contractKey);
   }
 
   /**

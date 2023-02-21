@@ -10,6 +10,8 @@ import "./verifier/VerifierDetails.sol";
 import "./registries/ConsumerRegistry.sol";
 import "./consumer/ConsumerDetails.sol";
 
+import "hardhat/console.sol";
+
 contract DApp{
 
     // Stores all the patients in a registry
@@ -34,6 +36,7 @@ contract DApp{
         // Deploys the user registry contract
         userRegistry = new UserRegistry();
         verifierRegistry = new VerifierRegistry();
+        consumerRegistry = new ConsumerRegistry();
         owner = msg.sender;
     }
 
