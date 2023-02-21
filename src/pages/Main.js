@@ -88,6 +88,13 @@ function Main() {
   }
   console.log(json)
   const newJson = json;
+
+  // Add any necessary updates
+  newJson.updated =  Date.now();
+  if (newJson.verificationMethod[0].blockchainAccountId === "none"){
+    newJson.verificationMethod[0].blockchainAccountId = proxyAddress
+  }
+
   newJson.attestations.push(attestation);
 
   var config = {
@@ -112,6 +119,7 @@ function Main() {
       signer
     );
 
+    console.log(newJson)
     try {
       const res = await axios(config);
 

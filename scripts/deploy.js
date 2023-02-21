@@ -12,7 +12,7 @@ async function main() {
   const dapp = DApp.connect(accounts[0]).deploy();
 
 
-  const hashData1 = await createAndPublishDIDJson("did:hide:abc123", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
+  const hashData1 = await createAndPublishDIDJson("did:hide:abc123", (await dapp).address, "none", Date.now());
   const hash1 = hashData1["IpfsHash"]
   console.log('Hash 1: ', hash1)
   const Controller1 = await hre.ethers.getContractFactory("Controller");
@@ -22,7 +22,7 @@ async function main() {
     (await hash1)
   );
 
-  const hashData2 = await createAndPublishDIDJson("did:hide:def456", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
+  const hashData2 = await createAndPublishDIDJson("did:hide:def456", (await dapp).address, "none", Date.now());
   const hash2 = hashData2["IpfsHash"]
   console.log('Hash 2: ', hash2)
   const Controller2 = await hre.ethers.getContractFactory("Controller");
@@ -48,7 +48,7 @@ main().catch((error) => {
 });
 
 // Function to create and publish the DID Document to 
-async function createAndPublishDIDJson(DID, controller, blockchainAccountID, timestamp, authentication) {
+async function createAndPublishDIDJson(DID, controller, blockchainAccountID, timestamp) {
 
   var data = JSON.stringify({
     "@context": "https://www.w3.org/ns/did/v1",
@@ -64,9 +64,8 @@ async function createAndPublishDIDJson(DID, controller, blockchainAccountID, tim
     "created": timestamp,
     "updated": timestamp,
     "deactivated": false,
-    
 
-    "authentication": [authentication],
+    "authentication": [],
     "attestations":[] // Added this to store attestations
 
 }
