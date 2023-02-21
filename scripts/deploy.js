@@ -12,7 +12,7 @@ async function main() {
   const dapp = DApp.connect(accounts[0]).deploy();
 
 
-  const hashData1 = await createAndPublishDIDJson("did:hide:patient1", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
+  const hashData1 = await createAndPublishDIDJson("did:hide:abc123", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
   const hash1 = hashData1["IpfsHash"]
   console.log('Hash 1: ', hash1)
   const Controller1 = await hre.ethers.getContractFactory("Controller");
@@ -22,7 +22,7 @@ async function main() {
     (await hash1)
   );
 
-  const hashData2 = await createAndPublishDIDJson("did:hide:patient2", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
+  const hashData2 = await createAndPublishDIDJson("did:hide:def456", "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a", "0xb9c5714089478a327f09197987f16f9e5d936e8a@eip155:1", Date.now(), "did:hide:0xb9c5714089478a327f09197987f16f9e5d936e8a#controller");
   const hash2 = hashData2["IpfsHash"]
   console.log('Hash 2: ', hash2)
   const Controller2 = await hre.ethers.getContractFactory("Controller");
@@ -77,8 +77,8 @@ var config = {
   url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
   headers: { 
     'Content-Type': 'application/json', 
-    pinata_api_key: ("e1953363934e9e56a17a"),
-    pinata_secret_api_key: ("3cb6745f71a170da981714abd90acc73fb4bf8837751b8e1c1e4fba3f671a15a")
+    pinata_api_key: ("c0e2dd6b45a6227d90d5"),
+    pinata_secret_api_key: ("2a48f55499ccea10aa77e58f3ad7a6212ae46b42ceff1befa0060a07a811f8b6")
     //'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJmZGZkMTdkNy1jOTQwLTRjMjItODAzYi00MjdjNDg3MGRkZTkiLCJlbWFpbCI6ImRpbm5lcmpvaG44NEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZTE5NTMzNjM5MzRlOWU1NmExN2EiLCJzY29wZWRLZXlTZWNyZXQiOiIzY2I2NzQ1ZjcxYTE3MGRhOTgxNzE0YWJkOTBhY2M3M2ZiNGJmODgzNzc1MWI4ZTFjMWU0ZmJhM2Y2NzFhMTVhIiwiaWF0IjoxNjY0NjgwMjYyfQ.VJ7VOyf4QOdQsQZhdAkTaD13Um6GTcsuGh3Ag76bQiI'
   },
   data : data

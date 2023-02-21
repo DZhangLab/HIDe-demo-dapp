@@ -32,7 +32,6 @@ contract DApp{
 
     constructor(){
         // Deploys the user registry contract
-        // TODO: Deploy the rest of the registries
         userRegistry = new UserRegistry();
         verifierRegistry = new VerifierRegistry();
         owner = msg.sender;
