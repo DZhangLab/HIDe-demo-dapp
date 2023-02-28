@@ -17,6 +17,8 @@ contract Proxy{
 
     string public patientHash; // I believe this should be part of the DID however I think it will change everytime new data is added onto IPFS
 
+    address recoveryAddress; // The recovery address of the patient
+
     struct Entry {
         string checkupInfo;
         address author;
@@ -31,12 +33,13 @@ contract Proxy{
 
     Entry[] entries;
 
-    constructor(address _application, string memory _patientDid, string memory _hash){
+    constructor(address _application, string memory _patientDid, string memory _hash, address _recovery){
         application = DApp(_application);
         owner = msg.sender;
         patientDid = _patientDid;
         console.log("Hash: ", _hash);
         patientHash = _hash;
+        recoveryAddress = _recovery;
     }
 
     // This is used to change the address of the controller contract, not the user. 
@@ -72,5 +75,10 @@ contract Proxy{
     function setHash(string memory _newHash) public{
         require(msg.sender == address(application), "You are not the application");
         patientHash = _newHash;
+    }
+
+    // Get the recovery address
+    function getRecovery() public view returns(address){
+        return recoveryAddress;
     }
 }

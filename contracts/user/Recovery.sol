@@ -32,19 +32,16 @@ contract Recovery{
 
     Controller controller;
 
-    // TODO: Change deployment so controllerAddress does not need to be set manually
-    constructor(){
-        user= msg.sender;
-    }
-
-    function setController(address _controller) public{
-        controller = Controller(_controller);
+    constructor(address patientAddress){
+        user= patientAddress;
+        controller = Controller(msg.sender);
     }
 
     // The user can add delegates
     function addDelegate(address _delegateAddress) public{
         require(msg.sender ==  user, "You are not the user");
-        require(delegateAdded + 1 weeks < block.timestamp, "It has not been a week since last delegate was added");
+        // TODO: Change 30 seconds to week
+        require(delegateAdded + 30 seconds < block.timestamp, "It has not been a week since last delegate was added");
         Delegate memory delegate = Delegate(_delegateAddress, false, true);
         delegates[_delegateAddress] = delegate;
         delegateAdded = block.timestamp;

@@ -22,8 +22,9 @@ contract Controller{
         userAddress = msg.sender;
         //primaryDelegateAddress = _primaryDelegateAddress;
 
-        recovery = new Recovery();
-        proxy = new Proxy(_applicationAddress, _patientDid, _hash);
+        recovery = new Recovery(userAddress);
+        console.log("Address of the Recovery: ", address(recovery));
+        proxy = new Proxy(_applicationAddress, _patientDid, _hash, address(recovery));
 
         proxy.createAccount();
         console.log("Address of Proxy: ", address(proxy));

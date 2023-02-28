@@ -12,8 +12,9 @@ async function main() {
   const dapp = DApp.connect(accounts[0]).deploy();
 
 
-  const hashData1 = await createAndPublishDIDJson("did:hide:abc123", (await dapp).address, "none", Date.now());
-  const hash1 = hashData1["IpfsHash"]
+  // const hashData1 = await createAndPublishDIDJson("did:hide:abc123", (await dapp).address, "none", Date.now());
+  const hash1 = "nothingToNotMakeManyCalls_1"
+  // const hash1 = hashData1["IpfsHash"]
   console.log('Hash 1: ', hash1)
   const Controller1 = await hre.ethers.getContractFactory("Controller");
   const controller1 = Controller1.connect(accounts[1]).deploy(
@@ -22,8 +23,9 @@ async function main() {
     (await hash1)
   );
 
-  const hashData2 = await createAndPublishDIDJson("did:hide:def456", (await dapp).address, "none", Date.now());
-  const hash2 = hashData2["IpfsHash"]
+  // const hashData2 = await createAndPublishDIDJson("did:hide:def456", (await dapp).address, "none", Date.now());
+  const hash2 = "nothingToNotMakeManyCalls_2"
+  // const hash2 = hashData2["IpfsHash"]
   console.log('Hash 2: ', hash2)
   const Controller2 = await hre.ethers.getContractFactory("Controller");
   const controller2 = Controller2.connect(accounts[2]).deploy(
