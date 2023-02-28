@@ -92,7 +92,7 @@ const RecoveryMain = () => {
       {/* <Button onClick={getUser}>Getting The User</Button> */}
       <h1>You are {userTypes[parseInt(type?._hex, 16)]} for DID: {usableDid}</h1>
       {parseInt(type?._hex, 16) == 1 ? <><AddDelegate recoveryAddress = {recoveryAddress}></AddDelegate></>: 
-      parseInt(type?._hex, 16) == 2 ? <div><ProposeRecovery></ProposeRecovery></div>:
+      parseInt(type?._hex, 16) == 2 ? <div><ProposeRecovery recoveryAddress = {recoveryAddress}></ProposeRecovery></div>:
       <div>Not authenticated for this contract</div>}
             </div>
   );
