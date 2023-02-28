@@ -8,6 +8,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import TextField from '@mui/material/TextField';
+import AddDelegate from './AddDelegate';
+import ProposeRecovery from './ProposeRecovery';
 
 const dappAddress = process.env.REACT_APP_DAPP_ADDRESS;
 
@@ -17,7 +19,6 @@ const RecoveryMain = () => {
     const [did, setDid] = useState("");
     const [recoveryAddress, setRecoveryAddress] = useState("")
     const [usableDid, setUsableDid] = useState("")
-    const [address, setAddress] = useState("") //delegate address
     
     useEffect(() => {
         // getUser();
@@ -77,28 +78,6 @@ const RecoveryMain = () => {
         }
       }
     
-    // Lets the user add delegates
-    async function addDelegate() {
-        if (typeof window.ethereum !== "undefined") {
-          await requestAccount();
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
-          const signer = provider.getSigner();
-          const contract = new ethers.Contract(
-            recoveryAddress,
-            Recovery.abi,
-            signer
-          );
-          try {
-            console.log(address)
-            const transaction = await contract.addDelegate(address);
-            await transaction.wait();
-            console.log("Added: ", address)
-          } catch (err) {
-            console.log("Error: ", err);
-          }
-        }
-      }
   return (
     <div>
          <TextField
@@ -112,21 +91,9 @@ const RecoveryMain = () => {
 
       {/* <Button onClick={getUser}>Getting The User</Button> */}
       <h1>You are {userTypes[parseInt(type?._hex, 16)]} for DID: {usableDid}</h1>
-      {/* {parseInt(type?._hex, 16) == 1 ? <><AddDelegate></AddDelegate></>: 
+      {parseInt(type?._hex, 16) == 1 ? <><AddDelegate recoveryAddress = {recoveryAddress}></AddDelegate></>: 
       parseInt(type?._hex, 16) == 2 ? <div><ProposeRecovery></ProposeRecovery></div>:
-      <div>Not a user</div>} */}
-      
-      <h2>Add Delegate</h2>
-
-        <TextField
-        type="text"
-        required
-        placeholder="Delegate Address"
-        onChange={(e) => setAddress(e.target.value)}
-        />
-        <Button onClick={addDelegate}>
-            Add
-        </Button>
+      <div>Not authenticated for this contract</div>}
             </div>
   );
 };
