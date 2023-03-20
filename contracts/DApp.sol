@@ -44,9 +44,7 @@ contract DApp{
 
     // Function for the owner to add consumers
      function addConsumer(string memory _did, address _cAddress) public{
-        console.log("Here1");
         require(msg.sender == owner, "You are not the owner");
-        console.log("Here2");
         _consumer.add(_cAddress);
         ConsumerDetails cDet = new ConsumerDetails(msg.sender);
         consumerRegistry.insertConsumer(_did, address(cDet));
