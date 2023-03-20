@@ -18,7 +18,6 @@ describe("Basic", function () {
     const { dapp, accounts } = await loadFixture(deployDapp);
 
     const hash1 = "nothingToNotMakeManyCalls_1";
-    // const hash1 = hashData1["IpfsHash"]
     console.log("Hash 1: ", hash1);
     const Controller1 = await hre.ethers.getContractFactory("Controller");
     const controller1 = Controller1.connect(accounts[1]).deploy(
@@ -27,9 +26,7 @@ describe("Basic", function () {
       await hash1
     );
 
-    // const hashData2 = await createAndPublishDIDJson("did:hide:def456", (await dapp).address, "none", Date.now());
     const hash2 = "nothingToNotMakeManyCalls_2";
-    // const hash2 = hashData2["IpfsHash"]
     console.log("Hash 2: ", hash2);
     const Controller2 = await hre.ethers.getContractFactory("Controller");
     const controller2 = Controller2.connect(accounts[2]).deploy(
@@ -41,16 +38,37 @@ describe("Basic", function () {
     return { dapp, controller1, controller2, accounts };
   };
 
-  describe("TestConsumer", function () {
+  describe("TestConsumer", async function () {
     it("Should be able to add consumer only from owner", async function () {
       const { dapp, accounts } = await loadFixture(deployDapp);
 
-      expect(
-        (await dapp).connect(accounts[1]).addConsumer(accounts[10])
-      ).to.be.revertedWith("You are not the owner");
+      // const transaction = await (
+      //   await dapp
+      // ).addConsumer("consumer10", accounts[10].address);
 
-      expect((await dapp).connect(accounts[0]).addConsumer(accounts[10])).not.to
-        .be.reverted;
+      // const response = await transaction.wait();
+
+      // const [events] = response.events;
+
+      // console.log(events);
+
+      // expect(
+      //   await (await dapp)
+      //     .connect(accounts[0])
+      //     .addConsumer("consumer11", accounts[11].address)
+      // ).to.equal(true);
+
+      await expect(async () => {
+        (await dapp)
+          .connect(accounts[0])
+          .addConsumer("consumer10", accounts[10]);
+      }).to.be.revertedWith("You are not the owner");
+
+      //   expect(
+      //     (await dapp)
+      //       .connect(accounts[0])
+      //       .addConsumer("consumer11", accounts[11])
+      //   ).not.to.be.reverted;
     });
 
     it("Should be able to add data to a patient", async function () {});

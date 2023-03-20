@@ -14,6 +14,8 @@ import "hardhat/console.sol";
 
 contract DApp{
 
+    event consumerAdded(address, string);
+
     // Stores all the patients in a registry
     UserRegistry userRegistry;
 
@@ -41,11 +43,14 @@ contract DApp{
     }
 
     // Function for the owner to add consumers
-     function addConsumer(string memory _did, address _cAddress) public {
+     function addConsumer(string memory _did, address _cAddress) public{
+        console.log("Here1");
         require(msg.sender == owner, "You are not the owner");
+        console.log("Here2");
         _consumer.add(_cAddress);
         ConsumerDetails cDet = new ConsumerDetails(msg.sender);
         consumerRegistry.insertConsumer(_did, address(cDet));
+        emit consumerAdded(_cAddress, _did);
     }
 
     // Function for the owner to add verifiers
