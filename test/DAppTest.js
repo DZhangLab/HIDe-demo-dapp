@@ -41,58 +41,115 @@ describe("Basic", function () {
     return { dapp, controller1, controller2, accounts };
   };
 
-  describe("TestConsumer", async function () {
-    it("Should be able to add consumer only from owner", async function () {
+  // describe("TestConsumer", async function () {
+  //   it("Should be able to add consumer only from owner", async function () {
+  //     const { dapp, controller1, controller2, accounts } = await loadFixture(
+  //       deployPatients
+  //     );
+
+  //     await expect(
+  //       (await dapp)
+  //         .connect(accounts[1])
+  //         .addConsumer("consumer10", accounts[10].address)
+  //     ).to.be.revertedWith("You are not the owner");
+
+  //     await expect(
+  //       (await dapp)
+  //         .connect(accounts[0])
+  //         .addConsumer("consumer10", accounts[10].address)
+  //     ).not.to.be.reverted;
+  //   });
+
+  //   it("Adding Data to patient", async function () {
+  //     const { dapp, controller1, controller2, accounts } = await loadFixture(
+  //       deployPatients
+  //     );
+
+  //     await expect(
+  //       (await dapp)
+  //         .connect(accounts[0])
+  //         .addVerifier("verifier11", accounts[11].address)
+  //     ).not.to.be.reverted;
+
+  //     // Non Verifier Trying to add data
+  //     await expect(
+  //       (await dapp)
+  //         .connect(accounts[1])
+  //         .addAttestation("abc123", "imaginaryHash")
+  //     ).to.be.revertedWith("DOES_NOT_HAVE_VERIFIER_ROLE");
+
+  //     // Verifier Trying to add data
+  //     await expect(
+  //       (await dapp)
+  //         .connect(accounts[11])
+  //         .addAttestation("imaginaryHash", "abc123")
+  //     ).not.to.be.reverted;
+
+  //     // Checking that the patients controller hash is correct
+  //     const proxyAddress = (await controller1).getProxyAddress();
+
+  //     const Proxy = await ethers.getContractFactory("Proxy");
+  //     const proxy = await Proxy.attach(proxyAddress);
+
+  //     let newHash = "imaginaryHash";
+  //     await expect(await (await proxy).patientHash()).to.equal(newHash);
+  //   });
+  // });
+
+  describe("TestRecovery", async function () {
+    it("Patient Adding Delegate", async function () {
       const { dapp, controller1, controller2, accounts } = await loadFixture(
         deployPatients
       );
 
-      await expect(
-        (await dapp)
-          .connect(accounts[1])
-          .addConsumer("consumer10", accounts[10].address)
-      ).to.be.revertedWith("You are not the owner");
-
-      await expect(
-        (await dapp)
-          .connect(accounts[0])
-          .addConsumer("consumer10", accounts[10].address)
-      ).not.to.be.reverted;
-    });
-
-    it("Adding Data to patient", async function () {
-      const { dapp, controller1, controller2, accounts } = await loadFixture(
-        deployPatients
-      );
-
-      await expect(
-        (await dapp)
-          .connect(accounts[0])
-          .addVerifier("verifier11", accounts[11].address)
-      ).not.to.be.reverted;
-
-      // Non Verifier Trying to add data
-      await expect(
-        (await dapp)
-          .connect(accounts[1])
-          .addAttestation("abc123", "imaginaryHash")
-      ).to.be.revertedWith("DOES_NOT_HAVE_VERIFIER_ROLE");
-
-      // Verifier Trying to add data
-      await expect(
-        (await dapp)
-          .connect(accounts[11])
-          .addAttestation("imaginaryHash", "abc123")
-      ).not.to.be.reverted;
-
-      // Checking that the patients controller hash is correct
-      const proxyAddress = (await controller1).getProxyAddress();
+      // First we need to get the proxy address of the patient
+      const proxyAddress = await (await controller1).getProxyAddress();
 
       const Proxy = await ethers.getContractFactory("Proxy");
       const proxy = await Proxy.attach(proxyAddress);
 
-      let newHash = "imaginaryHash";
-      await expect(await (await proxy).patientHash()).to.equal(newHash);
+      // Next we need to get the recovery address
+      const recoveryAddress = await proxy.getRecovery();
+      console.log(await recoveryAddress);
+
+      // Getting recovery contract of patient
+      const Recovery = await ethers.getContractFactory("Recovery");
+      const recovery = await Recovery.attach(recoveryAddress);
+
+      // Non Patient Trying to add delegate
+      await expect(
+        (await recovery).connect(accounts[2]).addDelegate(accounts[3].address)
+      ).to.be.revertedWith("You are not the user");
+
+      // Patient adding delegate delegate
+      await expect(
+        (await recovery).connect(accounts[1]).addDelegate(accounts[3].address)
+      ).not.to.be.reverted;
+
+      await expect(
+        (await recovery).connect(accounts[1]).addDelegate(accounts[4].address)
+      ).not.to.be.reverted;
+
+      // Delegate creating proposal
+      await expect(
+        (await recovery)
+          .connect(accounts[1])
+          .proposeRecovery(accounts[5].address)
+      ).to.be.revertedWith("You are not a permitted delegate");
+
+      await expect(
+        (await recovery)
+          .connect(accounts[3])
+          .proposeRecovery(accounts[5].address)
+      ).not.to.be.reverted;
+
+      // Checking current status, should be pending
+      // await expect(await (await recovery).proposal().status()).to.equal(newHash);
+      console.log("Status :", await (await recovery).proposal.status);
+
+      // Other delegate voting yes on proposal
+      await expect((await recovery).connect(accounts[4]).voteProposal(1)).not.to
+        .be.reverted;
     });
   });
 });

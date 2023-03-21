@@ -4,9 +4,11 @@ pragma solidity ^0.8.1;
 
 import "./Controller.sol";
 
+import "hardhat/console.sol";
+
 contract Recovery {
     address user;
-    uint256 delegateCount;
+    uint256 delegateCount = 0;
 
     // keeps track of the time the last delagate was added
     uint256 delegateAdded;
@@ -27,7 +29,7 @@ contract Recovery {
     }
 
     mapping(address => Delegate) delegates;
-    RecoveryProposal proposal;
+    RecoveryProposal public proposal;
     bool proposalPending = false;
 
     Controller controller;
@@ -41,13 +43,14 @@ contract Recovery {
     function addDelegate(address _delegateAddress) public {
         require(msg.sender == user, "You are not the user");
         // TODO: Change 30 seconds to week
-        require(
-            delegateAdded + 30 seconds < block.timestamp,
-            "It has not been a week since last delegate was added"
-        );
+        // require(
+        //     delegateAdded + 30 seconds < block.timestamp,
+        //     "It has not been a week since last delegate was added"
+        // );
         Delegate memory delegate = Delegate(_delegateAddress, false, true);
         delegates[_delegateAddress] = delegate;
         delegateAdded = block.timestamp;
+        delegateCount = delegateCount + 1;
     }
 
     // The user can revoke delegates

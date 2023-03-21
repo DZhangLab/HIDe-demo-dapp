@@ -23,6 +23,7 @@ contract Controller{
         //primaryDelegateAddress = _primaryDelegateAddress;
 
         recovery = new Recovery(userAddress);
+        recoveryAddress = address(recovery);
         console.log("Address of the Recovery: ", address(recovery));
         proxy = new Proxy(_applicationAddress, _patientDid, _hash, address(recovery));
 
@@ -32,6 +33,10 @@ contract Controller{
 
     // For the recovery contract to change the userAddress
     function changeUserAddress(address _newAddress) public{
+        console.log("trying to change public address");
+        console.log("You need to be: ", recoveryAddress);
+        console.log("You are: ", msg.sender);
+        console.log("trying to change public address");
         require(msg.sender == recoveryAddress, "You are not the recovery address, you cannot change the user address");
         userAddress = _newAddress;
     }
