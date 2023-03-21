@@ -13,7 +13,7 @@ import ProposeRecovery from "./ProposeRecovery";
 
 const dappAddress = process.env.REACT_APP_DAPP_ADDRESS;
 
-const userTypes = ["Not a User or Delegate", "User", "Delegate"];
+const userTypes = ["not a user or delegate", "user", "delegate"];
 const RecoveryMain = () => {
   const [type, setType] = useState("");
   const [did, setDid] = useState("");
@@ -21,8 +21,14 @@ const RecoveryMain = () => {
   const [usableDid, setUsableDid] = useState("");
 
   useEffect(() => {
-    // getUser();
-    // console.log(parseInt(type._hex, 16))
+    if (window.ethereum) {
+      window.ethereum.on("chainChanged", () => {
+        window.location.reload();
+      });
+      window.ethereum.on("accountsChanged", () => {
+        window.location.reload();
+      });
+    }
   }, []);
 
   async function requestAccount() {
@@ -99,20 +105,26 @@ const RecoveryMain = () => {
 
         {/* <Button onClick={getUser}>Getting The User</Button> */}
         <h1>
-          You are {userTypes[parseInt(type?._hex, 16)]} for DID: {usableDid}
+          {type == "" ? (
+            <div>Submit a DID to see your role</div>
+          ) : (
+            <>
+              You are {userTypes[parseInt(type?._hex, 16)]} for DID: {usableDid}
+            </>
+          )}
         </h1>
         {parseInt(type?._hex, 16) == 1 ? (
           <>
             <AddDelegate recoveryAddress={recoveryAddress}></AddDelegate>
           </>
         ) : parseInt(type?._hex, 16) == 2 ? (
-          <div>
+          <>
             <ProposeRecovery
               recoveryAddress={recoveryAddress}
             ></ProposeRecovery>
-          </div>
+          </>
         ) : (
-          <div>Not authenticated for this contract</div>
+          <div>Currently not authenticated for this user</div>
         )}
       </Box>
     </div>
