@@ -37,24 +37,23 @@ const RecoveryMain = () => {
 
   // First get the proxy then call it to get the recovery
   async function getRecoveryAddress() {
-    setUsableDid(did);
     if (typeof window.ethereum !== "undefined") {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const contract1 = new ethers.Contract(dappAddress, DApp.abi, provider);
       try {
-        const proxyAddress = await contract1.getPatientProxy(usableDid);
+        const proxyAddress = await contract1.getPatientProxy(did);
         console.log("Proxy Address: ", proxyAddress);
         const contract2 = new ethers.Contract(
-          proxyAddress,
+          await proxyAddress,
           Proxy.abi,
           provider
         );
         try {
-          const recAddress = await contract2.getRecovery();
+          const recAddress = await (await contract2).getRecovery();
           console.log("Recovery Address: ", recAddress);
           setRecoveryAddress(recAddress);
-          getUser();
+          getUser(await recAddress);
         } catch (err) {
           console.log("Error: ", err);
         }
@@ -65,21 +64,19 @@ const RecoveryMain = () => {
   }
 
   // Gets the user type to conditionally render some things
-  async function getUser() {
+  async function getUser(recAddr) {
     if (typeof window.ethereum !== "undefined") {
       await requestAccount();
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       // Need a signer even though its a viwe function because the function uses msg.sender
       const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        recoveryAddress,
-        Recovery.abi,
-        signer
-      );
+      console.log("Rec Address: ", recAddr);
+      const contract = new ethers.Contract(recAddr, Recovery.abi, signer);
       try {
         // console.log("Recovery trying to get user: ", recoveryAddress)
-        setType(await contract.getUserType());
+        const type = await contract.getUserType();
+        setType(type);
         console.log(parseInt(type?._hex, 16));
       } catch (err) {
         console.log("Error: ", err);
