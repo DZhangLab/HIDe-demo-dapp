@@ -5,7 +5,7 @@ import DApp from "../../artifacts/contracts/DApp.sol/DApp.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+// import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import AddDelegate from "./AddDelegate";
@@ -54,6 +54,7 @@ const RecoveryMain = () => {
           console.log("Recovery Address: ", recAddress);
           setRecoveryAddress(recAddress);
           getUser(await recAddress);
+          setUsableDid(did);
         } catch (err) {
           console.log("Error: ", err);
         }
@@ -102,7 +103,7 @@ const RecoveryMain = () => {
 
         {/* <Button onClick={getUser}>Getting The User</Button> */}
         <h1>
-          {type == "" ? (
+          {type === "" ? (
             <div>Submit a DID to see your role</div>
           ) : (
             <>
@@ -110,11 +111,11 @@ const RecoveryMain = () => {
             </>
           )}
         </h1>
-        {parseInt(type?._hex, 16) == 1 ? (
+        {parseInt(type?._hex, 16) === 1 ? (
           <>
             <AddDelegate recoveryAddress={recoveryAddress}></AddDelegate>
           </>
-        ) : parseInt(type?._hex, 16) == 2 ? (
+        ) : parseInt(type?._hex, 16) === 2 ? (
           <>
             <ProposeRecovery
               recoveryAddress={recoveryAddress}

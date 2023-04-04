@@ -8,6 +8,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import TextField from "@mui/material/TextField";
+import ReactJson from "react-json-view";
+import CryptoJS from "crypto-js";
 
 // Update with the contract address logged out to the CLI when it was deployed
 const firstProxyAddress = process.env.REACT_APP_CONTROLLER_ADDRESS;
@@ -20,6 +22,7 @@ function Main() {
   const [usableDid, setUsableDid] = useState("");
   const [attestation, setAttestation] = useState("");
   const [proxyAddress, setProxyAddress] = useState(firstProxyAddress);
+  const [address, setAddress] = useState("");
 
   // request access to the user's MetaMask account
   async function requestAccount() {
@@ -27,13 +30,14 @@ function Main() {
   }
 
   async function getProxy() {
+    const submitDid = await confirmDid();
     if (typeof window.ethereum !== "undefined") {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const contract = new ethers.Contract(dappAddress, DApp.abi, provider);
       try {
-        console.log("Here");
-        const data = await contract.getPatientProxy(usableDid);
+        console.log("UsableDID: ", submitDid);
+        const data = await contract.getPatientProxy(submitDid);
         setProxyAddress(data);
         console.log("data: ", data);
       } catch (err) {
@@ -52,6 +56,7 @@ function Main() {
         const data = await contract.patientHash();
         setUrl(`https://gateway.pinata.cloud/ipfs/${data}`);
         console.log("data: ", data);
+        retreiveJson(`https://gateway.pinata.cloud/ipfs/${data}`);
       } catch (err) {
         console.log("Error: ", err);
       }
@@ -60,12 +65,14 @@ function Main() {
 
   function confirmDid() {
     setUsableDid(did);
+    const temp = did;
     setDid("");
+    return temp;
   }
 
-  function retreiveJson() {
-    console.log(url);
-    return fetch(`${url}`)
+  function retreiveJson(passedUrl) {
+    console.log(passedUrl);
+    return fetch(`${passedUrl}`)
       .then((response) => response.json())
       .then((responseJson) => {
         setJson(responseJson);
@@ -91,8 +98,12 @@ function Main() {
     if (newJson.verificationMethod[0].blockchainAccountId === "none") {
       newJson.verificationMethod[0].blockchainAccountId = proxyAddress;
     }
+    const encryptedAttestation = CryptoJS.AES.encrypt(
+      attestation,
+      "secret key"
+    ).toString();
 
-    newJson.attestations.push(attestation);
+    newJson.attestations.push({ data: encryptedAttestation, keyId: "temp1" });
 
     var config = {
       method: "post",
@@ -111,6 +122,7 @@ function Main() {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
+      console.log("Signer: ", signer);
       const contract = new ethers.Contract(dappAddress, DApp.abi, signer);
 
       console.log(newJson);
@@ -147,21 +159,31 @@ function Main() {
         }}
       />
       <Box sx={{ "& button": { m: 1 } }}>
-        <Button variant="contained" onClick={confirmDid}>
+        {/* <Button variant="contained" onClick={confirmDid}>
           Confirm DID
-        </Button>
+        </Button> */}
 
         <Button variant="contained" onClick={getProxy}>
-          Get Proxy
+          Confirm DID
         </Button>
         <Button variant="contained" onClick={fetchHash}>
-          Fetch Hash
-        </Button>
-        <Button variant="contained" onClick={retreiveJson}>
           View DID Document
         </Button>
-        <p style={{ flex: 1, flexWrap: "wrap" }}> {JSON.stringify(json)}</p>
-
+        {/* <Button variant="contained" onClick={retreiveJson}>
+          View DID Document
+        </Button> */}
+        {/* <p style={{ flex: 1, flexWrap: "wrap" }}> {JSON.stringify(json)}</p> */}
+        <h3>
+          <ReactJson
+            src={json}
+            name="DID Document"
+            collapsed={true}
+            displayDataTypes={false}
+            displayObjectSize={false}
+            enableClipboard={false}
+            iconStyle="square"
+          />
+        </h3>
         <Button variant="contained" onClick={addAttestation}>
           Add Attestation
         </Button>

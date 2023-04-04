@@ -150,6 +150,13 @@ describe("Basic", function () {
       // Other delegate voting yes on proposal
       await expect((await recovery).connect(accounts[4]).voteProposal(1)).not.to
         .be.reverted;
+
+      // This should make the proposal pass since their is majority vote
+      // We can now check that the address of controller1 is accounts[5].address
+      // console.log("User Address: ", await (await controller1).userAddress());
+      await expect(await (await controller1).userAddress()).to.equal(
+        accounts[5].address
+      );
     });
   });
 });

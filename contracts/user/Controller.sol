@@ -8,7 +8,7 @@ import "hardhat/console.sol";
 
 contract Controller{
 
-    address userAddress; // Public key (in ethereum this is their address)
+    address public userAddress; // Public key (in ethereum this is their address)
     
     address primaryDelegateAddress; // The ethereum address of the main representative
 
