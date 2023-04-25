@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Button from "@mui/material/Button";
 // import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import AddDelegate from "./AddDelegate";
 import ProposeRecovery from "./ProposeRecovery";
@@ -88,6 +88,7 @@ const RecoveryMain = () => {
   return (
     <div>
       <Box sx={{ "& button": { m: 1 } }}>
+        {/* <Button onClick={getUser}>Getting The User</Button> */}
         <TextField
           type="text"
           required
@@ -97,14 +98,17 @@ const RecoveryMain = () => {
             setDid(e.target.value);
           }}
         />
+
         <Button variant="contained" onClick={getRecoveryAddress}>
           Submit
         </Button>
-
-        {/* <Button onClick={getUser}>Getting The User</Button> */}
         <h1>
           {type === "" ? (
-            <div>Submit a DID to see your role</div>
+            <div>
+              <Typography variant="h4">
+                Submit a DID to see your role
+              </Typography>
+            </div>
           ) : (
             <>
               You are {userTypes[parseInt(type?._hex, 16)]} for DID: {usableDid}

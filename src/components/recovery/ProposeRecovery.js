@@ -15,7 +15,6 @@ import Container from "@mui/material/Container";
 
 const ProposeRecovery = ({ recoveryAddress }) => {
   const [proposal, setProposal] = useState([]);
-  const [vote, setVote] = useState(0);
 
   const [address, setAddress] = useState("");
 
@@ -25,12 +24,10 @@ const ProposeRecovery = ({ recoveryAddress }) => {
   }, []);
 
   function voteNo() {
-    setVote(0);
-    voteProposal();
+    voteProposal(0);
   }
   function voteYes() {
-    setVote(1);
-    voteProposal();
+    voteProposal(1);
   }
 
   // uses metamask injected browser window to make sure consumer has a connected account
@@ -58,7 +55,7 @@ const ProposeRecovery = ({ recoveryAddress }) => {
     }
   }
 
-  async function voteProposal() {
+  async function voteProposal(vote) {
     if (typeof window.ethereum !== "undefined") {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -100,7 +97,7 @@ const ProposeRecovery = ({ recoveryAddress }) => {
   return (
     <div className="App">
       <h2>Start the Recovery Process</h2>
-      <h6>
+      {/* <h6>
         The user lost their private key and they contacted you off chain. You
         have verified that authenticy of this request. By starting the recovery
         process you will create a proposal to change the current user public
@@ -109,7 +106,7 @@ const ProposeRecovery = ({ recoveryAddress }) => {
         or more, the address will automatically changed. Otherwise, the proposal
         will expire after 1 week and the address will change if the yes votes is
         greater than or equal to no votes.
-      </h6>
+      </h6> */}
 
       <TextField
         type="text"
@@ -120,7 +117,7 @@ const ProposeRecovery = ({ recoveryAddress }) => {
       <Button onClick={proposeRecovery}>Propose</Button>
       <br></br>
       <br></br>
-      {proposal != [] ? (
+      {proposal[0] != "0x0000000000000000000000000000000000000000" ? (
         <>
           {" "}
           <Container>
@@ -147,7 +144,7 @@ const ProposeRecovery = ({ recoveryAddress }) => {
                     ? "Cancelled"
                     : parseInt(proposal?.status?._hex, 16) == 1
                     ? "Pending"
-                    : "Cancelled"}
+                    : "Passed"}
                 </Typography>
               </CardContent>
               <CardActions>

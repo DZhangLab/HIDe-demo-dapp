@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CryptoJS from "crypto-js";
+import { Box } from "@mui/material";
 
 function Encrypt() {
   const [inputText, setInputText] = useState("");
@@ -30,8 +31,9 @@ function Encrypt() {
   };
 
   return (
-    <div>
-      <TextField
+    <Box sx={{ "& button": { m: 1 } }}>
+      <div>
+        {/* <TextField
         label="Input Text"
         value={inputText}
         onChange={handleInputChange}
@@ -40,26 +42,31 @@ function Encrypt() {
       <br />
       <Button variant="contained" color="primary" onClick={handleEncryptClick}>
         Encrypt
-      </Button>
-      <br />
-      <TextField
-        label="Encrypted Text"
-        value={encryptedText}
-        variant="outlined"
-        onChange={handleEncryptChange}
-      />
-      <br />
-      <Button variant="contained" color="primary" onClick={handleDecryptClick}>
-        Decrypt
-      </Button>
-      <br />
-      <TextField
-        label="Decrypted Text"
-        value={decryptedText}
-        variant="outlined"
-        disabled
-      />
-    </div>
+      </Button> */}
+        <br />
+        <TextField
+          label="Encrypted Text"
+          value={encryptedText}
+          variant="outlined"
+          onChange={handleEncryptChange}
+        />
+        <br />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleDecryptClick}
+        >
+          Decrypt
+        </Button>
+        <br />
+        <TextField
+          label="Decrypted Text"
+          value={decryptedText}
+          variant="outlined"
+          disabled
+        />
+      </div>
+    </Box>
   );
 }
 

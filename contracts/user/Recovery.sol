@@ -70,7 +70,7 @@ contract Recovery {
             msg.sender,
             _newAddress,
             0,
-            1,
+            0,
             block.timestamp,
             1
         );
@@ -88,6 +88,7 @@ contract Recovery {
             "You are not a permitted delegate"
         );
         require(proposalPending, "Proposal already finished");
+        require(delegates[msg.sender].voted = true, "Delegate already voted");
 
         if (vote == 0) {
             proposal.voteNo = proposal.voteNo + 1;
@@ -98,12 +99,14 @@ contract Recovery {
         // We can automatically end the vote if these conditions are met
         if (proposal.voteNo * 2 > delegateCount) {
             proposal.status = 0;
+            console.log("Vote Rejected");
         }
         if (proposal.voteYes * 2 >= delegateCount) {
             proposal.status = 2;
+            console.log("Vote Passed");
             changeUserAddress(proposal.newAddress);
         }
-
+        delegates[msg.sender].voted = true;
         // checks if it has expired
         checkStatus();
     }
@@ -112,8 +115,10 @@ contract Recovery {
     function checkStatus() public {
         if (proposal.deployDate + 1 weeks > block.timestamp) {
             if (proposal.voteNo > proposal.voteYes) {
+                console.log("Voted Rejected 2");
                 proposal.status = 0;
             } else {
+                console.log("Vote passed 2");
                 proposal.status = 2;
                 changeUserAddress(proposal.newAddress);
             }
@@ -122,6 +127,7 @@ contract Recovery {
 
     function changeUserAddress(address _newAddress) private {
         controller.changeUserAddress(_newAddress);
+        user = _newAddress;
     }
 
     // Returns the user type in terms of a uint. 0 - not a user, 1 - user, 2 - delegate
