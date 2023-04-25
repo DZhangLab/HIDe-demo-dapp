@@ -12,6 +12,8 @@ const dappAddress = process.env.REACT_APP_DAPP_ADDRESS;
 function Admin() {
   const [did, setDid] = useState("");
   const [address, setAddress] = useState("");
+  const [verifier, setVerifier] = useState("");
+  const [verifierDid, setVerifierDid] = useState("");
 
   async function requestAccount() {
     await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -41,10 +43,10 @@ function Admin() {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(dappAddress, DApp.abi, signer);
       try {
-        await contract.addVerifier(did, address);
+        await contract.addVerifier(verifierDid, verifier);
         console.log("Sucessfully Added: ", did);
         setDid("");
-        setAddress("");
+        setVerifier("");
       } catch (err) {
         console.log("Error: ", err);
       }
@@ -74,7 +76,7 @@ function Admin() {
         <TextField
           type="text"
           required
-          placeholder="Address"
+          placeholder="Public Key"
           value={address}
           onChange={(e) => {
             setAddress(e.target.value);
@@ -94,18 +96,18 @@ function Admin() {
           type="text"
           required
           placeholder="DID"
-          value={did}
+          value={verifierDid}
           onChange={(e) => {
-            setDid(e.target.value);
+            setVerifierDid(e.target.value);
           }}
         />
         <TextField
           type="text"
           required
-          placeholder="Address"
-          value={address}
+          placeholder="Public Key"
+          value={verifier}
           onChange={(e) => {
-            setAddress(e.target.value);
+            setVerifier(e.target.value);
           }}
         />
       </Box>
